@@ -42,13 +42,17 @@ function postItems() {
           type: "input",
           message: "The price of this item is $" + queryResult[itemNum].price + "\n  There are " + queryResult[itemNum].stock_quantity + " of this item available. How many would you like to buy?",
         }
-      ]).then(function(answer) {
+      ]).then(function (answer) {
         console.log(answer);
         console.log(answer.number);
         if (isNaN(answer.number) || answer < 0) {
           console.log("Please enter a valid number to purchase")
         } else if (answer.number <= queryResult[itemNum].stock_quantity) {
-          console.log("$"+answer.number * queryResult[itemNum].price);
+          connection.query("UPDATE products SET stock_quantity = ?", [queryResult[itemNum].stock_quantity - answer.number], function (err) {
+            if(err) console.log(err);
+            console.log("There are now " + (queryResult[itemNum].stock_quantity - answer.number) + " of this product left.");
+          });
+          console.log("$" + answer.number * queryResult[itemNum].price);
           connection.end();
         } else if (answer.number > queryResult[itemNum].stock_quantity) {
           console.log("Insufficient quantity!");
