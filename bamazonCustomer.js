@@ -25,6 +25,8 @@ function postItems() {
     if (err) throw err;
     var products = [];
     queryResult.forEach((e, i) => products[i] = e.item_id + ": " + e.product_name);
+    var num = 30;
+    console.log(typeof num.toFixed(2));
     inquirer.prompt([
       {
         name: "product",
@@ -33,15 +35,28 @@ function postItems() {
         choices: products
       }
     ]).then(function (answer) {
-      var num = answer.product.split(":")[0] - 1;
+      var itemNum = answer.product.split(":")[0] - 1;
       inquirer.prompt([
         {
-          name: "answer",
+          name: "number",
           type: "input",
-          message: "The price of this item is $" + queryResult[num].price + "\n  There are " + queryResult[num].stock_quantity + " of this item available. How many would you like to buy?",
-
+          message: "The price of this item is $" + queryResult[itemNum].price + "\n  There are " + queryResult[itemNum].stock_quantity + " of this item available. How many would you like to buy?",
         }
-      ])
+      ]).then(function(answer) {
+        console.log(answer);
+        console.log(answer.number);
+        if (isNaN(answer.number) || answer < 0) {
+          console.log("Please enter a valid number to purchase")
+        } else if (answer.number <= queryResult[itemNum].stock_quantity) {
+          console.log("$"+answer.number * queryResult[itemNum].price);
+        } else if (answer.number > queryResult[itemNum].stock_quantity) {
+          console.log("Insufficient quantity!");
+        } else {
+          console.log("Unknown error");
+        }
+
+
+      });
     });
   });
 }
