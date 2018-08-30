@@ -49,10 +49,13 @@ function postItems() {
           console.log("Please enter a valid number to purchase")
         } else if (answer.number <= queryResult[itemNum].stock_quantity) {
           console.log("$"+answer.number * queryResult[itemNum].price);
+          connection.end();
         } else if (answer.number > queryResult[itemNum].stock_quantity) {
           console.log("Insufficient quantity!");
+          connection.end();
         } else {
           console.log("Unknown error");
+          connection.end();
         }
 
 
